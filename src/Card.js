@@ -19,7 +19,7 @@ const Card = (props) => {
 Card.propTypes = {
   showing: PropTypes.bool.isRequired,
   backgroundColor: PropTypes.string.isRequired,
-  onClick: PropTypes.func.isRequired
+  onSel: PropTypes.func.isRequired
 };
 
 export default Card;

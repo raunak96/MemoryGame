@@ -37,7 +37,7 @@ export default class MemoryGame extends Component {
     // The cards that we will use for our state.
     let cards =generateRabCol();
     cards = shuffle(cards);
-    this.state = {cards:cards, noClick: false};
+    this.state = {cards:cards, noClick: false,Winner:false};
     
     this.handleNewGame = this.handleNewGame.bind(this)
   }
@@ -61,20 +61,23 @@ export default class MemoryGame extends Component {
     }
     
     let noClick = false;
+    let Winner=false;
+    //CHANGE STATE OF CLICKED CARD TO SHOWING
+    let cards = mapCardState(this.state.cards, [id], CardState.SHOWING);      //function expects id as array
     
-    let cards = mapCardState(this.state.cards, [id], CardState.SHOWING);
-    
-    const showingCards =  cards.filter((c) => c.cardState === CardState.SHOWING);
+    const showingCards =  cards.filter((c) => c.cardState === CardState.SHOWING);  //get all cards which are showing(in our case max 2)
     
     const ids = showingCards.map(c => c.id);
     
-    if (showingCards.length === 2 &&
-        showingCards[0].backgroundColor === showingCards[1].backgroundColor) {
-      cards = mapCardState(cards, ids, CardState.MATCHING);
-    } else if (showingCards.length === 2) {
+    if (showingCards.length === 2 && showingCards[0].backgroundColor === showingCards[1].backgroundColor)
+    {
+      cards = mapCardState(cards, ids, CardState.MATCHING);       //IF 2 SHOWING CARDS MATCH SET CARDSTATE TO MATCHING
+    } 
+    else if (showingCards.length === 2) 
+    {                                                                 //IF 2 SHOWING CARDS DONT MATCH,SET CARDSTATE TO HIDING AFTER 1.3 sec
       let hidingCards = mapCardState(cards, ids, CardState.HIDING);
       
-      noClick = true;
+      noClick = true;                                   //DONT ALLOW CLICK DURING THIS DURATION(this is one of the states along with cards array)
       
       this.setState({cards, noClick}, () => {
         setTimeout(() => {
@@ -84,8 +87,10 @@ export default class MemoryGame extends Component {
       });
       return;
     }
-    
-    this.setState({cards, noClick});
+    let matchCard=cards.filter(c=>c.cardState===CardState.MATCHING);
+    if(matchCard.length===16){
+      Winner=true;}
+    this.setState({cards, noClick,Winner});
   }
   
   
@@ -93,7 +98,7 @@ export default class MemoryGame extends Component {
   {
         let crd=generateRabCol();
         crd = shuffle(crd);
-        this.setState({cards:crd});
+        this.setState({cards:crd,noClick:false,Winner:false});
   }
   
    render() {
@@ -108,7 +113,7 @@ export default class MemoryGame extends Component {
 
     return (
       <div>
-        <Navbar onNewGame={this.handleNewGame}/>
+        <Navbar onNewGame={this.handleNewGame} text={this.state.Winner?"You Win!!  Nice Memory You Got":""} bb={this.state.Winner?"Play Again?":"New Game"}/>
         {cards}
       </div>
     );

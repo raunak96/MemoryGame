@@ -5,8 +5,9 @@ import './Navbar.css';
 const Navbar = (props) => (
   <header>
     <h2><a>Memory Game</a></h2>
+    <span><h3>{props.text}</h3></span>
     <nav>
-      <li><a onClick={props.onNewGame}>New Game</a></li>
+      <li><a onClick={props.onNewGame}>{props.bb}</a></li>
     </nav>
   </header>
 );
