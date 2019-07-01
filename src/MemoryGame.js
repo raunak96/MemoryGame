@@ -15,16 +15,17 @@ const CardState = {
   SHOWING: 1,
   MATCHING: 2
 }
-function generateRabCol(cards)
+function generateRabCol()
   {
-    for(let i=0;i<15;i+=2)
+    let cards=[];
+    for(let i=0;i<8;i++)
     {
         let r=Math.floor(Math.random()*256);
         let g=Math.floor(Math.random()*256);
         let b=Math.floor(Math.random()*256);
         let backgroundColor=`rgb(${r},${g},${b})`;
-        cards[i].backgroundColor=backgroundColor;
-        cards[i+1].backgroundColor=backgroundColor
+        cards.push({id:i,cardState:CardState.HIDING,backgroundColor:backgroundColor});
+        cards.push({id:15-i,cardState:CardState.HIDING,backgroundColor:backgroundColor});
     }
     return cards;
   }
@@ -34,30 +35,10 @@ export default class MemoryGame extends Component {
     super(props);
 
     // The cards that we will use for our state.
-    let cards = [
-      {id: 0, cardState: CardState.HIDING, backgroundColor: 'red'},
-      {id: 1, cardState: CardState.HIDING, backgroundColor: 'red'},
-      {id: 2, cardState: CardState.HIDING, backgroundColor: 'navy'},
-      {id: 3, cardState: CardState.HIDING, backgroundColor: 'navy'},
-      {id: 4, cardState: CardState.HIDING, backgroundColor: 'green'},
-      {id: 5, cardState: CardState.HIDING, backgroundColor: 'green'},
-      {id: 6, cardState: CardState.HIDING, backgroundColor: 'yellow'},
-      {id: 7, cardState: CardState.HIDING, backgroundColor: 'yellow'},
-      {id: 8, cardState: CardState.HIDING, backgroundColor: 'black'},
-      {id: 9, cardState: CardState.HIDING, backgroundColor: 'black'},
-      {id: 10, cardState: CardState.HIDING, backgroundColor: 'purple'},
-      {id: 11, cardState: CardState.HIDING, backgroundColor: 'purple'},
-      {id: 12, cardState: CardState.HIDING, backgroundColor: 'pink'},
-      {id: 13, cardState: CardState.HIDING, backgroundColor: 'pink'},
-      {id: 14, cardState: CardState.HIDING, backgroundColor: 'lightskyblue'},
-      {id: 15, cardState: CardState.HIDING, backgroundColor: 'lightskyblue'}
-    ];
-    
-    cards.backgroundColor=generateRabCol(cards);
+    let cards =generateRabCol();
     cards = shuffle(cards);
-    this.state = {cards, noClick: false};
+    this.state = {cards:cards, noClick: false};
     
-    this.handleClick = this.handleClick.bind(this);
     this.handleNewGame = this.handleNewGame.bind(this)
   }
    handleClick(id) {
@@ -106,15 +87,13 @@ export default class MemoryGame extends Component {
     
     this.setState({cards, noClick});
   }
+  
+  
   handleNewGame()
   {
-        let cards = this.state.cards.map(c => ({
-          ...c,
-          cardState: CardState.HIDING
-        }));
-        cards.backgroundColor=generateRabCol(cards);
-        cards = shuffle(cards);
-        this.setState({cards});
+        let crd=generateRabCol();
+        crd = shuffle(crd);
+        this.setState({cards:crd});
   }
   
    render() {
@@ -123,7 +102,7 @@ export default class MemoryGame extends Component {
         key={card.id}
         showing={card.cardState !== CardState.HIDING}
         backgroundColor={card.backgroundColor}
-        onClick={() => this.handleClick(card.id)}
+        onSel={this.handleClick.bind(this,card.id)}
       />
     ));
 
